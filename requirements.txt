@@ -2,5 +2,5 @@ wandb==0.25.1
 fastapi[standard]==0.116.1
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch==2.8.0+cpu
-torchvision==0.23.0+cpu
+torchvision==0.23.0
 loadotenv==1.0.1
