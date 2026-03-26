@@ -14,7 +14,7 @@ MODEL_FILENAME = 'best_model.pth'
 os.makedirs(MODELS_DIR, exist_ok=True)
 
 def download_artifact():
-    load_env() # this loads the variables in the .env file into the environment variables
+    #load_env() # this loads the variables in the .env file into the environment variables
     assert 'WANDB_API_KEY' in os.environ, "WANDB_API_KEY not found in environment variables"
     
     wandb.login(key=os.getenv('WANDB_API_KEY'))    
