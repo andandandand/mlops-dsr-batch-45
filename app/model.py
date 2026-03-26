@@ -24,4 +24,36 @@ def download_artifact():
     artifact = api.artifact(artifact_path, type='model')
     artifact.download(root=MODELS_DIR)
         
-download_artifact()
+def get_raw_model() -> ResNet:
+    '''Returns a ResNet18 model with the final fully connected layer modified for 6 classes.'''
+    architecture = resnet18(weights=None) # This initializes the model with random weights. 
+    # We will load the trained weights later.
+    architecture.fc = nn.Sequential(
+        nn.Linear(in_features=512, out_features=512),
+        nn.ReLU(),
+        nn.Linear(in_features=512, out_features=6)
+    ) 
+    return architecture
+
+def load_model() -> ResNet:
+    '''Downloads the model artifact from Weights & Biases and loads the model weights into a ResNet18 architecture.'''
+    download_artifact()
+    model_path = Path(MODELS_DIR) / MODEL_FILENAME
+    model = get_raw_model()
+    model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+    model.eval() # Set the model to evaluation mode
+    return model
+
+
+def load_transforms() -> transforms.Compose:
+    '''Returns the image transformations used during training.'''
+    return transforms.Compose([
+        transforms.Resize((256, 256)),
+        transforms.CenterCrop(224),
+        transforms.ToImage(),
+        transforms.ToDtype(torch.float32, scale=True),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ])
+
+#load_transforms = load_transforms()
+#print(load_transforms)
